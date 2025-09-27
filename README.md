@@ -27,7 +27,7 @@ The system will show whether you:
 - ❌ Or did **not pass** the admission
 
 
-## 📊 Features
+## 🌸 Features
 
 ✅ Admission score calculator
 
@@ -39,7 +39,7 @@ The system will show whether you:
 
 ✅ 100% test coverage
 
-## 🛠 Tech Stack
+## 🤓 Tech Stack
 ### Backend:
 
 - Node.js + Express.js
@@ -62,7 +62,7 @@ The system will show whether you:
 
 - GitHub Actions CI/CD
 
-## API Endpoints
+## 💅API Endpoints
 Authentication
 Method	Endpoint	Description
 ```bash
@@ -91,4 +91,6 @@ npm run dev
 # Run linter
 npm run lint
 ```
+## 🤙 Database Schema
 
+![Database Schema](./діаграма.png)
