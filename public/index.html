@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="style.css">
+  <title>University Calculator</title>
+</head>
+<body>
+  <script>
+    // Redirect to login if no token
+    if (!localStorage.getItem('token')) {
+      window.location.href = '/login';
+    }
+  </script>
+
+  <h1>Enter your exam scores</h1>
+  <p class="description">Check your admission possibilities</p>
+
+  <form id="scoreForm">
+    <div class="subject-row">
+      <select name="subject1" class="subject-select">
+        <option value="">Select subject</option>
+        <option value="math">Math</option>
+        <option value="informatics">Informatics</option>
+        <option value="english">English</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="biology">Biology</option>
+        <option value="history">History</option>
+        <option value="geography">Geography</option>
+        <option value="literature">Literature</option>
+      </select>
+      <input type="number" name="score1" min="0" max="100" placeholder="0-100" required>
+    </div>
+
+    <div class="subject-row">
+      <select name="subject2" class="subject-select">
+        <option value="">Select subject</option>
+        <option value="math">Math</option>
+        <option value="informatics">Informatics</option>
+        <option value="english">English</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="biology">Biology</option>
+        <option value="history">History</option>
+        <option value="geography">Geography</option>
+        <option value="literature">Literature</option>
+      </select>
+      <input type="number" name="score2" min="0" max="100" placeholder="0-100" required>
+    </div>
+
+    <div class="subject-row">
+      <select name="subject3" class="subject-select">
+        <option value="">Select subject</option>
+        <option value="math">Math</option>
+        <option value="informatics">Informatics</option>
+        <option value="english">English</option>
+        <option value="physics">Physics</option>
+        <option value="chemistry">Chemistry</option>
+        <option value="biology">Biology</option>
+        <option value="history">History</option>
+        <option value="geography">Geography</option>
+        <option value="literature">Literature</option>
+      </select>
+      <input type="number" name="score3" min="0" max="100" placeholder="0-100" required>
+    </div>
+
+    <button type="submit">Check</button>
+  </form>
+
+  <h2>Result:</h2>
+  <div id="result"></div>
+
+  <button id="logoutBtn" style="position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    Logout
+  </button>
+
+  <script>
+    // Logout 
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    });
+
+    const selects = document.querySelectorAll(".subject-select");
+
+    function updateSelectOptions() {
+      const selectedValues = Array.from(selects).map(select => select.value).filter(val => val);
+      
+      selects.forEach(select => {
+        const currentValue = select.value;
+        
+        Array.from(select.options).forEach(option => {
+          if (option.value === "") {
+            option.disabled = false;
+          } else if (option.value && selectedValues.includes(option.value) && option.value !== currentValue) {
+            option.disabled = true;
+            option.style.display = 'none';
+          } else {
+            option.disabled = false;
+            option.style.display = '';
+          }
+        });
+      });
+    }
+
+    selects.forEach(select => {
+      select.addEventListener("change", function() {
+        updateSelectOptions();
+        
+        const values = Array.from(selects).map(s => s.value).filter(val => val);
+        const uniqueValues = new Set(values);
+        
+        if (values.length === 3 && uniqueValues.size < 3) {
+          alert("Please select three different subjects");
+          this.value = "";
+          updateSelectOptions();
+        }
+      });
+    });
+
+    updateSelectOptions();
+
+    document.getElementById("scoreForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // Validate subjects are selected and different!!
+      const subject1 = this.subject1.value;
+      const subject2 = this.subject2.value;
+      const subject3 = this.subject3.value;
+      
+      if (!subject1 || !subject2 || !subject3) {
+        alert("Please select all three subjects");
+        return;
+      }
+      
+      const subjects = [subject1, subject2, subject3];
+      const uniqueSubjects = new Set(subjects);
+      
+      if (uniqueSubjects.size < 3) {
+        alert("Please select three different subjects");
+        return;
+      }
+
+      const data = {
+        subject1: subject1,
+        score1: parseInt(this.score1.value),
+        subject2: subject2,
+        score2: parseInt(this.score2.value),
+        subject3: subject3,
+        score3: parseInt(this.score3.value),
+      };
+
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch("/api/check-scores", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (res.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+          return;
+        }
+
+        const result = await res.json();
+        
+        const container = document.getElementById("result");
+        container.innerHTML = "";
+
+        if (result.error) {
+          container.innerHTML = `<p class="error">Error: ${result.error}</p>`;
+          return;
+        }
+
+        if (!result.enteredScores || !result.matchingPrograms) {
+          container.innerHTML = `<p class="error">Invalid response format from server</p>`;
+          return;
+        }
+
+        const totalScore = result.enteredScores.total;
+        const programs = result.matchingPrograms;
+
+        if (!programs || programs.length === 0) {
+          container.innerHTML = `<p class="no-pass">Sorry, your total score (${totalScore}) does not allow enrollment anywhere.</p>`;
+          return;
+        }
+
+        const budgetPrograms = programs.filter(p => totalScore >= p.free_threshold);
+        const scholarshipPrograms = programs.filter(p => totalScore >= p.scholarship_threshold);
+
+        container.innerHTML = '';
+
+        if (budgetPrograms.length > 0) {
+          const budgetDiv = document.createElement("div");
+          budgetDiv.classList.add("program-block", "budget");
+          budgetDiv.innerHTML = `<h3>🎓 BUDGET Enrollment (${budgetPrograms.length} programs)</h3>`;
+          
+          const budgetContainer = document.createElement("div");
+          budgetContainer.classList.add("programs-container");
+          
+          budgetPrograms.forEach(p => {
+            const isAlsoScholarship = scholarshipPrograms.includes(p);
+            budgetContainer.innerHTML += `
+              <div class="program-card budget-card">
+                <h4>${p.program}</h4>
+                <p><strong>${p.university}</strong></p>
+                <p>📊 Your score: ${totalScore}</p>
+                <p>🎯 Budget threshold: ${p.free_threshold} ✅</p>
+                <p>💵 Scholarship threshold: ${p.scholarship_threshold} ${totalScore >= p.scholarship_threshold ? '✅' : '❌'}</p>
+                ${isAlsoScholarship ? '<p class="both-categories">✓ Also available for scholarship</p>' : ''}
+              </div>`;
+          });
+          
+          budgetDiv.appendChild(budgetContainer);
+          container.appendChild(budgetDiv);
+        }
+
+        if (scholarshipPrograms.length > 0) {
+          const scholarshipDiv = document.createElement("div");
+          scholarshipDiv.classList.add("program-block", "scholarship");
+          scholarshipDiv.innerHTML = `<h3>💰 SCHOLARSHIP Enrollment (${scholarshipPrograms.length} programs)</h3>`;
+          
+          const scholarshipContainer = document.createElement("div");
+          scholarshipContainer.classList.add("programs-container");
+          
+          scholarshipPrograms.forEach(p => {
+            const isAlsoBudget = budgetPrograms.includes(p);
+            scholarshipContainer.innerHTML += `
+              <div class="program-card scholarship-card">
+                <h4>${p.program}</h4>
+                <p><strong>${p.university}</strong></p>
+                <p>📊 Your score: ${totalScore}</p>
+                <p>🎯 Budget threshold: ${p.free_threshold} ${totalScore >= p.free_threshold ? '✅' : '❌'}</p>
+                <p>💵 Scholarship threshold: ${p.scholarship_threshold} ✅</p>
+                ${isAlsoBudget ? '<p class="both-categories">✓ Also available for budget</p>' : ''}
+              </div>`;
+          });
+          
+          scholarshipDiv.appendChild(scholarshipContainer);
+          container.appendChild(scholarshipDiv);
+        }
+
+        // add summary
+        const summary = document.createElement("div");
+        summary.classList.add("summary");
+        summary.innerHTML = `
+          <p><strong>Summary:</strong> Total score: ${totalScore} | 
+          Budget programs: ${budgetPrograms.length} | 
+          Scholarship programs: ${scholarshipPrograms.length}</p>`;
+        container.appendChild(summary);
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById("result").innerHTML = `<p class="error">Network error: ${error.message}</p>`;
+      }
+    });
+  </script>
+
+  <style>
+    .program-card {
+      margin: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .budget-card {
+      border-left: 4px solid #4CAF50;
+    }
+    
+    .scholarship-card {
+      border-left: 4px solid #FFC107;
+    }
+    
+    .both-categories {
+      color: #ffeb3b;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    
+    .program-block h3 {
+      margin: 20px 0 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .program-block.budget h3 {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4CAF50;
+    }
+    
+    .program-block.scholarship h3 {
+      background: rgba(255, 193, 7, 0.2);
+      color: #FFC107;
+    }
+  </style>
+</body>
+</html>

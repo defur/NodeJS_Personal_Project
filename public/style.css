@@ -1,0 +1,232 @@
+/* ===== Общие настройки ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #1f1c2c;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+h2 {
+    margin-top: 40px;
+    font-size: 2rem;
+    text-align: center;
+    color: #f0f0f0;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Формы (общий стиль для калькулятора, логина, регистрации) ===== */
+form {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+input,
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: background 0.3s, transform 0.2s;
+}
+
+select option {
+    background: #2c2c54;
+    color: white;
+}
+
+select:focus,
+input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+    transform: scale(1.05);
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+/* ===== Расстояние в калькуляторе ===== */
+.subject-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    /* ← добавила отступ между select и input */
+    margin-bottom: 20px;
+}
+
+.subject-row select,
+.subject-row input {
+    width: 48%;
+}
+
+/* ===== Кнопки (единый стиль) ===== */
+button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #007bff;
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+/* ===== Блоки программ в калькуляторе ===== */
+#result {
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px auto 0;
+}
+
+.programs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 10px;
+}
+
+.program-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    border-radius: 12px;
+    width: 280px;
+    min-height: 180px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s, background 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.program-card:hover {
+    transform: translateY(-3px) scale(1.03);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.program-block h3 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    padding: 10px;
+}
+
+.program-block.budget h3 {
+    color: #00c851;
+    background: rgba(0, 200, 81, 0.1);
+    border-radius: 8px;
+}
+
+.program-block.scholarship h3 {
+    color: #33b5e5;
+    background: rgba(51, 181, 229, 0.1);
+    border-radius: 8px;
+}
+
+/* ===== Auth (login / signup) ===== */
+.auth-container,
+.login-container {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 40px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-container h2,
+.login-container h2 {
+    margin-bottom: 20px;
+}
+
+.switch-auth {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.switch-auth a {
+    color: #66b3ff;
+    cursor: pointer;
+}
+
+.error {
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+}
+
+/* ===== Logout Button ===== */
+#logoutBtn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background: #666;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    width: auto;
+    max-width: 120px;
+}
+
+/* ===== adaptivka ===== */
+@media (max-width: 768px) {
+    .programs-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .program-card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+}

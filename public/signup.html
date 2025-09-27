@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>Sign Up</h2>
+    <form id="signupForm" autocomplete="off">
+      <input type="text" id="full_name" placeholder="Full name (optional)">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Sign Up</button>
+      <p id="signupMsg" class="error" style="display:none"></p>
+    </form>
+    <p class="switch-auth">Already have an account? <a href="login.html">Sign in</a></p>
+  </div>
+
+  <script>
+    const signupForm = document.getElementById('signupForm');
+    const signupMsg = document.getElementById('signupMsg');
+
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      signupMsg.style.display = 'none';
+
+      const full_name = document.getElementById('full_name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, full_name })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // { message: "User registered successfully" }
+          signupMsg.style.display = 'block';
+          signupMsg.style.color = '#00ff99';
+          signupMsg.textContent = data.message || 'Registration is successful. Proceed to login.';
+          // redirect to the login page after 1.5s
+          setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+        } else {
+          signupMsg.style.display = 'block';
+          signupMsg.style.color = '#ff6b6b';
+          signupMsg.textContent = data.error || data.message || 'Signup failed';
+        }
+      } catch (err) {
+        signupMsg.style.display = 'block';
+        signupMsg.style.color = '#ff6b6b';
+        signupMsg.textContent = 'Network error: ' + (err.message || err);
+      }
+    });
+  </script>
+</body>
+</html>
