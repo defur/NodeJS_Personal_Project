@@ -1,6 +1,5 @@
 const { test, expect } = require('@jest/globals');
 
-// Тестируем реальные утилиты
 const { calculateTotalScore, isValidScore } = require('../utils/calculations.js');
 
 describe('Real Calculations', () => {
