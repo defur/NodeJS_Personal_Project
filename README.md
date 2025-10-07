@@ -37,7 +37,7 @@ The system will show whether you:
 
 ✅ Responsive design
 
-✅ 100% test coverage
+✅ 52% test coverage
 
 ## 🤓 Tech Stack
 ### Backend:
@@ -62,15 +62,79 @@ The system will show whether you:
 
 - GitHub Actions CI/CD
 
-## 💅API Endpoints
+## API Endpoints check options 
+
+### 1. Via browser (quick method)
+Open in your browser:
+```bash
+http://localhost:3001/api/test - check API
+
+http://localhost:3001/signup - registration page
+
+http://localhost:3001/login - login page
+```
+### 2. Via Thunder Client (for VScode):
+- Registration
+```http
+POST http://localhost:3001/api/auth/signup
+
+Body(json):
+{
+  "email": "student@example.com",
+  "password": "123456",
+  "full_name": "Test User"
+}
+```
+you should receive the following response:
+```http
+{
+  "message": "User registered successfully"
+}
+```
+
+
+- User login (use only after registration!):
+```http
+POST http://localhost:3001/api/auth/login
+
+Body(json):
+{
+  "email": "student@example.com",
+  "password": "123456"
+}
+```
+you should receive the following response:
+```http
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+- You can also get user data:
+```http
+GET http://localhost:3001/api/auth/me
+
+Authorization     Bearer INSERT_THE_TOKEN_YOU_RECEIVED_DURING_LOGIN_HERER
+
+```
+
+
+you should receive the following response:
+```http
+{
+  "id": 45,
+  "email": "student@example.com",
+  "full_name": "Test User",
+  "role": "student"
+}
+```
 Authentication
 Method	Endpoint	Description
 ```bash
-POST	/api/auth/signup	    Register new user
+POST	http://localhost:3001/api/auth/signup	    Register new user
 
-POST	/api/auth/login	    User login
+POST	http://localhost:3001/api/auth/login	    User login
 
-POST	/api/auth/logout	    User logout
+POST	http://localhost:3001/api/auth/logout	    User logout
 
 ```
 ## 🧪 Testing
