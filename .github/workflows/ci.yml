@@ -31,7 +31,7 @@ jobs:
       run: npm run lint
     
     - name: Run tests
-      run: npm test
+      run: |
         export NODE_ENV=test
         export NODE_OPTIONS=--experimental-vm-modules
         npm test
