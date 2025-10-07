@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import mysql from "mysql2"; 
 import authRoutes from "./routes/auth.js";
 import { authMiddleware } from "./middleware/authMiddleware.js";
-const { calculateTotalScore, isValidScore } = require('./utils/calculations.js');
+//import { calculateTotalScore, isValidScore } from './utils/calculations.js';
 
 
 dotenv.config();
