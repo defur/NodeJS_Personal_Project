@@ -91,7 +91,7 @@ you should receive the following response:
   "message": "User registered successfully"
 }
 ```
-
+![EXAMPLE1](./Screenshot_3.png)
 
 - User login (use only after registration!):
 ```http
@@ -109,6 +109,9 @@ you should receive the following response:
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
+![EXAMPLE2](./Screenshot_4.png)
+
+
 - You can also get user data:
 ```http
 GET http://localhost:3001/api/auth/me
@@ -127,6 +130,9 @@ you should receive the following response:
   "role": "student"
 }
 ```
+![EXAMPLE3](./Screenshot_5.png)
+
+
 Authentication
 Method	Endpoint	Description
 ```bash
