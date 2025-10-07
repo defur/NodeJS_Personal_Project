@@ -62,7 +62,7 @@ The system will show whether you:
 
 - GitHub Actions CI/CD
 
-## API Endpoints check options 
+## 🌸 API Endpoints check options 
 
 ### 1. Via browser (quick method)
 Open in your browser:
